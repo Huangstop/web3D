@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+</style>
+</head>
+<body>
+
+<div>
+  <img src="https://i.imgur.com/omX5Drl.png" style="position:absolute;top:0vw;left:10vw;width:80vw;height:100vh;z-index:-1">
+</div>
+
+<button id="bb" style="position:absolute; left:10vw; top:3vh">
+Light On!
+</button>
+
+<button id="normal" style="position:absolute; left:10vw; top:6vh">
+normal mode
+</button>
+
+<button id="random" style="position:absolute; left:10vw; top:9vh">
+random mode
+</button>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+
+<script>
+
+var but = false;
+var lights = [];
+var start = new Date().getTime();
+var elapsed = 0;
+var barrier;
+var next;
+var colorChange;
+
+$('#bb').click(function() {
+  but = !but;
+  if (!but) {
+    $('#bb').text('Light On!')
+  } else {
+    $('#bb').text('Light Off!')
+  }
+});
+
+$('#normal').click(function() {
+  next = 500;
+  barrier = barrier + 500;
+});
+
+$('#random').click(function() {
+  var rand = 1000 + Math.random() * 1000;
+  next = rand;
+  barrier = barrier + rand;
+});
+
+
+class Light {
+
+  constructor() {
+    // create/append div dynamically
+    // https://stackoverflow.com/questions/14004117/create-div-and-append-div-dynamically
+    this.element = document.createElement('div');
+    // set element style attribute
+    //https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style
+    this.element.style.cssText = "position:absolute;width:30px;height:30px;border-radius:25px;z-index:1";
+    this.element.style.top = '15vh';
+    this.element.style.left = '30vw';
+    // CSS color property: https://www.w3schools.com/cssref/pr_text_color.asp
+    // hsl: https://www.w3schools.com/colors/colors_hsl.asp
+    this.element.style.background = "hsl(65, 100%, 50%)";
+    document.getElementsByTagName('body')[0].appendChild(this.element);
+  }
+
+  ramdPos() {
+  	let hi = Math.random() * 65;
+    this.element.style.top = hi + 'vh';
+    let wi;
+    
+    if(hi <= 5)
+    	this.element.style.left = 45 + Math.random() * 15 + 'vw';
+    else if(hi <= 25 && hi > 5)
+      this.element.style.left = 35 + Math.random() * 30 + 'vw';
+    else if(hi <= 40 && hi > 25)
+    	this.element.style.left = 25 + Math.random() * 50 + 'vw';
+   	else
+    	this.element.style.left = 20 + Math.random() * 60 + 'vw';
+  }
+
+}
+
+////////////////////////////////
+init();
+animate();
+
+function init() {
+  var light;
+  for (var count = 0; count < 200; count++) {
+    light = new Light()
+    light.element.style.background = "hsl(65, 100%, 50%)";
+    lights.push(light);
+  }
+
+  next = 500;
+  barrier = next;
+
+  lights.forEach(function(l) {
+    l.ramdPos();
+  });
+}
+
+
+function animate() {
+  requestAnimationFrame(animate);
+  elapsed = new Date().getTime() - start;
+
+  if (!but) {
+    if (elapsed > barrier)
+      barrier += next;
+    lights.forEach(function(l) {
+      l.element.style.background = "hsl(65, 20%, 20%)";
+    });
+  } else {
+    if (elapsed > barrier) {
+      barrier += next;
+      lights.forEach(function(l) {
+        l.element.style.background = "hsl(" + Math.random() * 360 + ", 100%, 50%)";
+      });
+    }
+  }
+}
+
+
+
+</script>
+
+</body>
+</html>
+
+
