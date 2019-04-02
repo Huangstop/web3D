@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #2222dd
+}
+
+body {
+  overflow: hidden;
+}
+</style>
+</head>
+<body>
+
+<div id="info">
+<h3>Web3D_HW2(ver01)  
+<br>not finished yet
+<br><a href="blueprint.svg">press here to see blueprint</a>
+<h3>
+</div>
+
+<audio id="soundtrack" autoplay loop style="display:none">
+<source src="music/LeviathanMagnaSen.mp3" type='audio/mp3'>
+</audio>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script>
+
+var scene, renderer, camera;
+var ruler = 0.2;
+
+init();
+animate();
+
+function init() {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+  camera.position.z = 1500 * ruler;
+  camera.position.y = 1000 * ruler;
+  /*var gridXZ = new THREE.GridHelper(1500 * ruler, 150 * ruler, 'red', 'white');
+  scene.add(gridXZ);*/
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x888888);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  document.body.appendChild(renderer.domElement);
+
+
+  //////myScene//////
+  //ambientlight
+  var ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // soft white light
+  scene.add(ambientLight);
+
+  let loader = new THREE.TextureLoader();
+  loader.crossOrigin = '';
+  texture = loader.load('https://i.imgur.com/4nHUZ40.jpg');
+  texture.repeat.set (2,2);
+  texture.wrapS = texture.wrapT = true;
+
+  var floor = new THREE.Mesh(new THREE.PlaneGeometry(1500 * ruler, 1500 * ruler), new THREE.MeshPhongMaterial({
+    map: texture,
+    side: THREE.DoubleSide
+  }));
+  floor.rotateX(Math.PI / 2);
+  shadow(floor, false, true);
+  floor.position.y = -0.05;
+  scene.add(floor);
+  /*floor.castShadow = true; //default is false
+  floor.receiveShadow = true; //default*/
+  
+  var ceiling = new THREE.Mesh(new THREE.BoxGeometry(1540 * ruler, 50 * ruler, 1540 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff,
+    opacity: 0.5,
+    transparent: true,
+    side: THREE.DoubleSide
+  }));
+  ceiling.position.y = 325 * ruler;
+  scene.add(ceiling);
+
+  var wall;
+  wall = new THREE.Mesh(new THREE.BoxGeometry(1540 * ruler, 300 * ruler, 20 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  wall.position.set(0, 300 / 2 * ruler, (-(1500 + 20) / 2) * ruler);
+  shadow(wall, false, true);
+  scene.add(wall);
+
+  wall = new THREE.Mesh(new THREE.BoxGeometry(20 * ruler, 300 * ruler, 1540 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  wall.position.set((-(1500 + 20) / 2) * ruler, 300 / 2 * ruler, 0);
+  shadow(wall, false, true);
+  scene.add(wall);
+
+  wall = new THREE.Mesh(new THREE.BoxGeometry(20 * ruler, 300 * ruler, 1540 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  wall.position.set(((1500 + 20) / 2) * ruler, 300 / 2 * ruler, 0);
+  shadow(wall, false, true);
+  scene.add(wall);
+
+  wall = new THREE.Mesh(new THREE.BoxGeometry(600 * ruler, 300 * ruler, 20 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  wall.position.set((-(1500 - 600) / 2) * ruler, 300 / 2 * ruler, ((1500 + 20) / 2) * ruler);
+  shadow(wall, false, true);
+  scene.add(wall);
+
+  wall = new THREE.Mesh(new THREE.BoxGeometry(600 * ruler, 300 * ruler, 20 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  wall.position.set(((1500 - 600) / 2) * ruler, 300 / 2 * ruler, ((1500 + 20) / 2) * ruler);
+  shadow(wall, false, true);
+  scene.add(wall);
+
+  wall = new THREE.Mesh(new THREE.BoxGeometry(20 * ruler, 300 * ruler, 300 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  wall.position.set((300 + 20) / 2 * ruler, 300 / 2 * ruler, ((1500 - 300) / 2) * ruler);
+  shadow(wall, false, true);
+  scene.add(wall);
+
+  wall = new THREE.Mesh(new THREE.BoxGeometry(20 * ruler, 300 * ruler, 200 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  wall.position.set((-(300 + 20) / 2) * ruler, 300 / 2 * ruler, ((1500 - 200) / 2) * ruler);
+  shadow(wall, false, true);
+  scene.add(wall);
+
+  var innerWall;
+  innerWall = new THREE.Mesh(new THREE.BoxGeometry(20 * ruler, 300 * ruler, 220 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  innerWall.position.set(-((300 + 20) / 2 + 200) * ruler, 300 / 2 * ruler, (((1500 - 220) / 2) - 200) * ruler);
+  shadow(innerWall, false, true);
+  scene.add(innerWall);
+
+  innerWall = new THREE.Mesh(new THREE.BoxGeometry(20 * ruler, 300 * ruler, 300 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  innerWall.position.set(290 * ruler, 300 / 2 * ruler, (((1500 - 320) / 2) - 110) * ruler);
+  shadow(innerWall, false, true);
+  scene.add(innerWall);
+
+  innerWall = new THREE.Mesh(new THREE.BoxGeometry(640 * ruler, 300 * ruler, 20 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  innerWall.position.set(-30 * ruler, 300 / 2 * ruler, (((1500 + 20) / 2) - 420) * ruler);
+  shadow(innerWall, false, true);
+  scene.add(innerWall);
+
+  innerWall = new THREE.Mesh(new THREE.BoxGeometry(60 * ruler, 300 * ruler, 300 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  innerWall.position.set(520 * ruler, 300 / 2 * ruler, (((1500 - 320) / 2) - 110) * ruler);
+  shadow(innerWall, false, true);
+  scene.add(innerWall);
+
+  innerWall = new THREE.Mesh(new THREE.BoxGeometry(60 * ruler, 300 * ruler, 700 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  innerWall.position.set(520 * ruler, 300 / 2 * ruler, (480-150-100-350) * ruler);
+  shadow(innerWall, false, true);
+  scene.add(innerWall);
+  
+  innerWall = new THREE.Mesh(new THREE.BoxGeometry(60 * ruler, 300 * ruler, 480 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  innerWall.position.set(270 * ruler, 300 / 2 * ruler, (480-150-240) * ruler);
+  shadow(innerWall, false, true);
+  scene.add(innerWall);
+  
+  innerWall = new THREE.Mesh(new THREE.BoxGeometry(60 * ruler, 300 * ruler, 400 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  innerWall.position.set(270 * ruler, 300 / 2 * ruler, -450 * ruler);
+  shadow(innerWall, false, true);
+  scene.add(innerWall);
+  
+  innerWall = new THREE.Mesh(new THREE.BoxGeometry(600 * ruler, 300 * ruler, 100 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  innerWall.position.set(-285 * ruler, 300 / 2 * ruler, 0 * ruler);
+  shadow(innerWall, false, true);
+  scene.add(innerWall);
+  
+    innerWall = new THREE.Mesh(new THREE.BoxGeometry(600 * ruler, 300 * ruler, 100 * ruler), new THREE.MeshPhongMaterial({
+    color: 0xffffff
+  }));
+  innerWall.position.set(-285 * ruler, 300 / 2 * ruler, -400 * ruler);
+  shadow(innerWall, false, true);
+  scene.add(innerWall);
+
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  render();
+}
+
+function render() {
+  renderer.render(scene, camera);
+}
+
+function shadow(Object, castShadow, receiveShadow) {
+  Object.castShadow = castShadow;
+  Object.receiveShadow = receiveShadow;
+}
+
+</script>
+
+</body>
+</html>
+
+
