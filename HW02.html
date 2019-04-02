@@ -67,7 +67,7 @@ function init() {
   let loader = new THREE.TextureLoader();
   loader.crossOrigin = '';
   texture = loader.load('https://i.imgur.com/4nHUZ40.jpg');
-  texture.repeat.set (2,2);
+  texture.repeat.set (5,5);
   texture.wrapS = texture.wrapT = true;
 
   var floor = new THREE.Mesh(new THREE.PlaneGeometry(1500 * ruler, 1500 * ruler), new THREE.MeshPhongMaterial({
