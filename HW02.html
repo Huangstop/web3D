@@ -18,13 +18,14 @@ body {
 </head>
 <body>
 <div id="info">
-<h4>not finished yet<a href="blueprint.svg">press here to see blueprint</a><h4>
+<h4><a href="blueprint.svg">press here to see blueprint</a><h4>
 <h5>Web3D_HW2(ver01)<h5>
   <button id="butPower" style="width:25%">Power Button</button>
   <br><button id="butYL" style="width:15%">YardLight Button</button>
   <input type=range min=0.1 max=1 step=0.1 id='YLBrightness'> Brightness
   <br><button id="butLamp" style="width:15%">Lamp Button</button>
   <input type=range min=0.1 max=3 step=0.1 id='lampBrightness'> Brightness
+  <br><button id="switchCam" style="width:25%">Camera Switch</button>
 </div>
 
 <!--<audio id="soundtrack" autoplay loop style="display:none">
@@ -49,6 +50,14 @@ var YLBrightness = 0.5;
 var butYL = true;
 var lampBrightness = 1.5;
 var butLamp = true;
+var angle = 0;
+var sign = 1;
+var cameras = [];
+var counter = 0;
+var camCase = [];
+var angles = [];
+var anglesCheck = [];
+var signs = [];
 
 class NewLamp {
   constructor(size, color, lightColor, lightPow) {
@@ -88,6 +97,48 @@ class NewLamp {
     this.light.position.y = -2 * size;
 
     scene.add(this.box);
+  }
+}
+
+$("#switchCam").click(function() {
+  counter++;
+  if (counter >= cameras.length)
+    counter = 0;
+  camera = cameras[counter];
+});
+
+class NewCamera {
+  constructor() {
+    this.sCam = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+    //cameras.push(sCam);
+
+    this.cameraObj = new THREE.Object3D();
+    //this.cameraObj.add(new THREE.AxisHelper(40))
+    this.cameraBody = new THREE.Mesh(new THREE.BoxGeometry(5 * ruler, 5 * ruler, 10 * ruler), new THREE.MeshPhongMaterial({
+      color: 0x555555
+    }));
+    this.cameraBody.castShadow = true; //default is false
+    this.cameraBody.receiveShadow = true; //default
+    this.lens = new THREE.Mesh(new THREE.CylinderGeometry(2.5 * ruler, 3 * ruler, 3 * ruler, 32, false, 0), new THREE.MeshPhongMaterial({
+      color: 0x555555
+    }));
+    this.lens.castShadow = true; //default is false
+    this.lens.receiveShadow = true; //default
+    this.lens.position.z = -6 * ruler;
+    this.lens.rotation.x = Math.PI / 2;
+    this.cameraObj.add(this.cameraBody, this.lens);
+
+    this.cameraCase = new THREE.Object3D();
+    this.cameraCase.add(this.cameraObj);
+    this.cameraCase.position.set(50 * ruler, 75 * ruler, 50 * ruler);
+    scene.add(this.cameraCase);
+    //camCase.push(this.cameraCase);
+
+    // manual aiming, from (-50,40,50) to (0,0,0)
+    this.cameraCase.rotation.y = 0;
+    this.cameraCase.rotation.x = 0;
+    this.cameraCase.rotation.z = 0;
+    this.cameraCase.rotation.order = 'YXZ'
   }
 }
 
@@ -166,7 +217,12 @@ function init() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
   camera.position.z = 1500 * ruler;
-  camera.position.y = 1000 * ruler;
+  camera.position.y = 1500 * ruler;
+  cameras.push(camera);
+  camCase.push(null);
+  angles.push(null);
+  anglesCheck.push(null)
+  signs.push(1);
   /*var gridXZ = new THREE.GridHelper(1500 * ruler, 150 * ruler, 'red', 'white');
   scene.add(gridXZ);*/
   renderer = new THREE.WebGLRenderer();
@@ -334,9 +390,9 @@ function init() {
   lamp[1].box.rotateZ(-Math.PI / 3);
   lamp[1].box.position.set(-600 * ruler, 250 * ruler, 175 * ruler);
 
-  lamp.push(new NewLamp(2 * ruler, 0x999999, 0xbb3700, 3));
+  /*lamp.push(new NewLamp(2 * ruler, 0x999999, 0xbb3700, 3));
   lamp[2].box.rotateZ(-Math.PI / 3);
-  lamp[2].box.position.set(-600 * ruler, 250 * ruler, -190 * ruler);
+  lamp[2].box.position.set(-600 * ruler, 250 * ruler, -190 * ruler);*/
 
   //////yardLight//////
   yardLight.push(new THREE.PointLight(0x888888, 0.5, 0, 2));
@@ -347,15 +403,41 @@ function init() {
   yardLight[1].castShadow = true;
   yardLight[1].position.set(-500 * ruler, 295 * ruler, 250 * ruler);
 
-  yardLight.push(new THREE.PointLight(0x888888, 0.5, 0, 2));
+  /*yardLight.push(new THREE.PointLight(0x888888, 0.5, 0, 2));
   yardLight[2].castShadow = true;
-  yardLight[2].position.set(-500 * ruler, 295 * ruler, -190 * ruler);
+  yardLight[2].position.set(-500 * ruler, 295 * ruler, -190 * ruler);*/
 
   yardLight.forEach(function(yL, i) {
     scene.add(yL);
     pointLightHelper.push(new THREE.PointLightHelper(yL, 2));
     scene.add(pointLightHelper[i]);
   })
+
+  //////cameras//////
+  var myCamera;
+  myCamera = new NewCamera();
+  cameras.push(myCamera.sCam);
+  camCase.push(myCamera.cameraCase);
+  camCase[1].position.set(-250 * ruler, 275 * ruler, 650 * ruler);
+  camCase[1].rotation.y = Math.PI/2;
+  camCase[1].rotation.x = -Math.PI/6;
+  camCase[1].rotation.z = 0;
+  angles.push(camCase[1].rotation.y);
+  anglesCheck.push(camCase[1].rotation.y)
+  signs.push(1);
+  
+  myCamera = new NewCamera();
+  cameras.push(myCamera.sCam);
+  camCase.push(myCamera.cameraCase);
+  camCase[2].position.set(-250 * ruler, 275 * ruler, 250 * ruler);
+  camCase[2].rotation.y = Math.PI/2;
+  camCase[2].rotation.x = -Math.PI/6;
+  camCase[2].rotation.z = 0;
+  angles.push(camCase[2].rotation.y);
+  anglesCheck.push(camCase[2].rotation.y)
+  signs.push(1);
+  
+  window.addEventListener('resize', onWindowResize, false);
 
 }
 
@@ -365,6 +447,32 @@ function animate() {
 }
 
 function render() {
+	/*angles.rotation.y.forEach(function(a){
+  	a += 0.005 * sign;
+  if (a > 0.5 || a < -0.5)
+    sign *= -1;
+  })*/
+  for(let cc = 0; cc < angles.length;cc++){
+  	if(angles[cc]!=null && anglesCheck[cc]!=null){
+  	angles[cc] += 0.005*signs[cc];
+    if(angles[cc] > anglesCheck[cc] + 0.5 ||angles[cc] < anglesCheck[cc] -0.5)
+    	signs[cc] *= -1;
+    if(camCase[cc] != null)
+    	camCase[cc].rotation.y = angles[cc];
+      }
+  }
+  
+  
+  //cameraObj.rotation.y = angle;
+  /*camCase.forEach(function(c) {
+    if (c != null)
+      c.rotation.y = angle;
+  })*/
+
+  if (camCase[counter] != null) {
+    cameras[counter].matrixWorld.copy(camCase[counter].matrixWorld);
+    cameras[counter].matrixAutoUpdate = false;
+  }
   renderer.render(scene, camera);
 }
 
@@ -373,6 +481,11 @@ function shadow(Object, castShadow, receiveShadow) {
   Object.receiveShadow = receiveShadow;
 }
 
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
 </script>
 
