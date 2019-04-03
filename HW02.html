@@ -6,9 +6,9 @@
   position: absolute;
   top: 0px;
   width: 100%;
-  padding: 10px;
+  padding: 5px;
   text-align: center;
-  color: #2222dd
+  color: #ffdd55
 }
 
 body {
@@ -17,12 +17,11 @@ body {
 </style>
 </head>
 <body>
-
 <div id="info">
-<h3>Web3D_HW2(ver01)  
-<br>not finished yet
-<br><a href="blueprint.svg">press here to see blueprint</a>
-<h3>
+<h4>not finished yet<h4>
+<h5>Web3D_HW2(ver01) <a href="blueprint.svg">press here to see blueprint</a> <h5>
+<button id="butLamp" style="width:15%">Lamp Button</button>
+<input type=range min=0.1 max=2 step=0.1 id='lampBrightness'> Brightness
 </div>
 
 <audio id="soundtrack" autoplay loop style="display:none">
@@ -39,6 +38,76 @@ body {
 
 var scene, renderer, camera;
 var ruler = 0.2;
+var lamp = [];
+var lampBrightness = 2;
+var butLamp = true;
+
+class NewLamp {
+  constructor(size, color, lightColor, lightPow) {
+    this.box = new THREE.Mesh(new THREE.BoxGeometry(1 * size, 1 * size, 1 * size), new THREE.MeshPhongMaterial({
+      color: color
+    }));
+
+    var tower = new THREE.Mesh(new THREE.CylinderGeometry(2 * size, 4 * size, 10 * size, 32, false, 0), new THREE.MeshPhongMaterial({
+      color: color,
+      side: THREE.DoubleSide
+    }));
+    this.box.add(tower);
+    tower.castShadow = true; //default is false
+    tower.receiveShadow = true; //default
+    tower.position.y = -5 * size;
+
+    var top = new THREE.Mesh(new THREE.CylinderGeometry(2 * size, 2 * size, 1 * size, 32), new THREE.MeshPhongMaterial({
+      color: color,
+      side: THREE.DoubleSide
+    }));
+    top.castShadow = true; //default is false
+    top.receiveShadow = false; //default
+    this.box.add(top);
+
+    var bulb = new THREE.Mesh(new THREE.SphereGeometry(1 * size, 32, 32), new THREE.MeshPhongMaterial({
+      color: 0x555555,
+      opacity: 0.3,
+      transparent: true,
+      side: THREE.DoubleSide
+    }));
+    this.box.add(bulb);
+    bulb.position.y = -2 * size;
+
+    this.light = new THREE.PointLight(lightColor, lightPow, 0, 2);
+    this.light.castShadow = true;
+    this.box.add(this.light);
+    this.light.position.y = -2 * size;
+
+    scene.add(this.box);
+  }
+}
+
+$('#lampBrightness').change(function() {
+  console.log($(this).val());
+  lampBrightness = $(this).val();
+  if (butLamp == true)
+    lamp.forEach(function(l) {
+      l.light.intensity = lampBrightness;
+    })
+});
+
+$('#butLamp').click(function() {
+  //  toggleCamera();
+  butLamp = !butLamp;
+
+  if (butLamp == true) {
+    lamp.forEach(function(l) {
+      l.light.intensity = lampBrightness;
+    })
+    //lamp[0].light.intensity = lampBrightness;
+  } else {
+    lamp.forEach(function(l) {
+      l.light.intensity = 0;
+    })
+    //lamp[0].light.intensity = 0; 
+  }
+});
 
 init();
 animate();
@@ -66,8 +135,8 @@ function init() {
 
   let loader = new THREE.TextureLoader();
   loader.crossOrigin = '';
-  texture = loader.load('https://i.imgur.com/4nHUZ40.jpg');
-  texture.repeat.set (5,5);
+  texture = loader.load('https://imgur.com/tcP774R.jpg'); //https://i.imgur.com/4nHUZ40.jpg
+  texture.repeat.set(5, 5);
   texture.wrapS = texture.wrapT = true;
 
   var floor = new THREE.Mesh(new THREE.PlaneGeometry(1500 * ruler, 1500 * ruler), new THREE.MeshPhongMaterial({
@@ -78,9 +147,9 @@ function init() {
   shadow(floor, false, true);
   floor.position.y = -0.05;
   scene.add(floor);
-  /*floor.castShadow = true; //default is false
-  floor.receiveShadow = true; //default*/
-  
+  floor.castShadow = true; //default is false
+  floor.receiveShadow = true; //default
+
   var ceiling = new THREE.Mesh(new THREE.BoxGeometry(1540 * ruler, 50 * ruler, 1540 * ruler), new THREE.MeshPhongMaterial({
     color: 0xffffff,
     opacity: 0.5,
@@ -89,6 +158,8 @@ function init() {
   }));
   ceiling.position.y = 325 * ruler;
   scene.add(ceiling);
+  ceiling.castShadow = true; //default is false
+  ceiling.receiveShadow = true; //default
 
   var wall;
   wall = new THREE.Mesh(new THREE.BoxGeometry(1540 * ruler, 300 * ruler, 20 * ruler), new THREE.MeshPhongMaterial({
@@ -172,37 +243,50 @@ function init() {
   innerWall = new THREE.Mesh(new THREE.BoxGeometry(60 * ruler, 300 * ruler, 700 * ruler), new THREE.MeshPhongMaterial({
     color: 0xffffff
   }));
-  innerWall.position.set(520 * ruler, 300 / 2 * ruler, (480-150-100-350) * ruler);
+  innerWall.position.set(520 * ruler, 300 / 2 * ruler, (480 - 150 - 100 - 350) * ruler);
   shadow(innerWall, false, true);
   scene.add(innerWall);
-  
+
   innerWall = new THREE.Mesh(new THREE.BoxGeometry(60 * ruler, 300 * ruler, 480 * ruler), new THREE.MeshPhongMaterial({
     color: 0xffffff
   }));
-  innerWall.position.set(270 * ruler, 300 / 2 * ruler, (480-150-240) * ruler);
+  innerWall.position.set(270 * ruler, 300 / 2 * ruler, (480 - 150 - 240) * ruler);
   shadow(innerWall, false, true);
   scene.add(innerWall);
-  
+
   innerWall = new THREE.Mesh(new THREE.BoxGeometry(60 * ruler, 300 * ruler, 400 * ruler), new THREE.MeshPhongMaterial({
     color: 0xffffff
   }));
   innerWall.position.set(270 * ruler, 300 / 2 * ruler, -450 * ruler);
   shadow(innerWall, false, true);
   scene.add(innerWall);
-  
+
   innerWall = new THREE.Mesh(new THREE.BoxGeometry(600 * ruler, 300 * ruler, 100 * ruler), new THREE.MeshPhongMaterial({
     color: 0xffffff
   }));
   innerWall.position.set(-285 * ruler, 300 / 2 * ruler, 0 * ruler);
   shadow(innerWall, false, true);
   scene.add(innerWall);
-  
-    innerWall = new THREE.Mesh(new THREE.BoxGeometry(600 * ruler, 300 * ruler, 100 * ruler), new THREE.MeshPhongMaterial({
+
+  innerWall = new THREE.Mesh(new THREE.BoxGeometry(600 * ruler, 300 * ruler, 100 * ruler), new THREE.MeshPhongMaterial({
     color: 0xffffff
   }));
   innerWall.position.set(-285 * ruler, 300 / 2 * ruler, -400 * ruler);
   shadow(innerWall, false, true);
   scene.add(innerWall);
+
+  //////lamps//////
+  lamp.push(new NewLamp(2 * ruler, 0x999999, 0xbb3700, 2));
+  lamp[0].box.rotateZ(-Math.PI / 3);
+  lamp[0].box.position.set(-600 * ruler, 250 * ruler, 475 * ruler);
+
+  lamp.push(new NewLamp(2 * ruler, 0x999999, 0xbb3700, 2));
+  lamp[1].box.rotateZ(-Math.PI / 3);
+  lamp[1].box.position.set(-600 * ruler, 250 * ruler, 175 * ruler);
+
+  lamp.push(new NewLamp(2 * ruler, 0x999999, 0xbb3700, 2));
+  lamp[2].box.rotateZ(-Math.PI / 3);
+  lamp[2].box.position.set(-600 * ruler, 250 * ruler, -190 * ruler);
 
 }
 
@@ -219,6 +303,7 @@ function shadow(Object, castShadow, receiveShadow) {
   Object.castShadow = castShadow;
   Object.receiveShadow = receiveShadow;
 }
+
 
 </script>
 
