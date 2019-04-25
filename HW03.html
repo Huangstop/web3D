@@ -3,27 +3,39 @@
 <head>
 <style>
 #container {
-  width: 50vw;
-  height: 50vw;
+  width: 40vw;
+  height: 30vw;
   float: left;
   background-color: yellow;
-  margin: 1vw;
+  margin-left: 5vw;
+  margin-right: 3vw;
 }
 
 #container2 {
-  width: 20vw;
-  height: 20vw;
+  width: 16vw;
+  height: 12vw;
   float: left;
   background-color: red;
-  margin: 1vw;
+  margin-top:2vw;
+  margin-left: 1vw;
 }
 
 #container3 {
-  width: 20vw;
-  height: 20vw;
+  width: 16vw;
+  height: 12vw;
   float: left;
   background-color: red;
-  margin: 1vw;
+  margin-top:2vw;
+  margin-left: 1vw;
+}
+
+#container4 {
+  width: 16vw;
+  height: 12vw;
+  float: left;
+  background-color: red;
+  margin-top:2vw;
+  margin-left: 1vw;
 }
 
 p {
@@ -35,7 +47,7 @@ p {
 </head>
 <body>
 <h1 style="font-size:2em; text-align:center; margin:15px">
-  Hw3
+試作型&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<s>柚子社</s>千恋＊万花&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp角色介紹館
 </h1>
 <hr>
 <div id="container">
@@ -57,6 +69,15 @@ p {
   <!--canvas id='mycanvas'></canvas-->
 </div>
 
+<div id="container4">
+  <!--canvas id='mycanvas'></canvas-->
+</div>
+<br>
+<p style="font-size:32px;margin-left:5vw"> 角色說明: </p>
+<p id="pictureInfo" style="font-size:16px" style="width:20vw">請點選左側畫面上的圖片！</p>
+<br>
+
+<!--
 <p>
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quam lectus, porta eget tincidunt eget, auctor eget lorem. Cras sed est eu tellus consequat semper a ac dolor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas feugiat
   luctus augue sed pellentesque. In laoreet tincidunt lacinia. In pellentesque egestas enim ut auctor. Mauris et urna at est varius faucibus quis at sapien. Nam hendrerit velit at bibendum fringilla. Sed ut dignissim dui, eget sagittis est. Pellentesque
@@ -64,6 +85,7 @@ p {
   Quisque accumsan sed quam at dictum.
 </p>
 <br>
+
 <p>
   Nullam finibus felis et varius mollis. Donec sapien tellus, lacinia sit amet orci non, posuere laoreet nunc. Vivamus gravida turpis est, vulputate sagittis leo facilisis in. Sed aliquet ornare gravida. Nullam eget velit et lacus lacinia eleifend quis
   in metus. Vestibulum nec congue libero. Duis eu quam eu sem fermentum dapibus et vel ex. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
@@ -74,6 +96,7 @@ p {
   in lacinia diam, ut elementum libero. Quisque tempor libero eget felis malesuada malesuada. In efficitur, ipsum id lacinia fermentum, tortor enim rhoncus ipsum, ac lobortis magna neque et neque. Class aptent taciti sociosqu ad litora torquent per conubia
   nostra, per inceptos himenaeos. Cras est dolor, condimentum tincidunt molestie at, fringilla quis velit.
 </p>
+-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
 <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
 <script src="https://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script>
@@ -82,7 +105,7 @@ p {
 
 <script>
 
-var scene, renderer, rederer2, rederer3, camera, camera2, camera3;
+var scene, renderer, rederer2, rederer3, renderer4, camera, camera2, camera3, camera4;
 var cameraOfPic;
 var ruler = 0.2;
 var lamp = [];
@@ -105,6 +128,11 @@ var mouse = new THREE.Vector2();
 var raycaster = new THREE.Raycaster();
 var pickables = [];
 var camerasOfPic = [];
+var pictureInfos = [
+"朝武 芳乃 （ともたけ よしの）　CV：遥そら\n穂織にある神社の巫女姫様。\n主人公が神刀をへし折ったことで、土地の掟に従ってムリヤリ婚約相手にされてしまう。\n生真面目な性格で若干クールに見られがちだが、実際は冷たい人間ではない。\n\n喜怒哀楽がわりとハッキリしていて、精神的には子供っぽい部分が多々ある。\n冷静沈着に振る舞おうとするものの、簡単なミスも多くて意外とヌケている。\n「～～～……とにかく、結婚なんてしませんから。 お父さんが勝手に言っているだけですから」\n",
+"ムラサメ　CV：佐藤みかん\n神刀 “叢雨丸” に宿る魂のような存在。\n子供っぽい一面と、大人っぽい一面を併せ持っている。\n基本的には見た目通りの子供らしい性格で、元気で明るい女の子。\n数百年に渡り存在しているが、普通の人間には姿を見ることもできない。\n\n実は怖がりで、幽霊などが苦手。\n「吾輩の名はムラサメ。 この“叢雨丸”の管理者であり、神力（しんりき）を司る者である」"
+];
+var infoText;
 
 class NewLamp {
   constructor(size, color, lightColor, lightPow) {
@@ -299,6 +327,17 @@ function init() {
   renderer3.shadowMap.enabled = true;
   renderer3.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
   $('#container3').append(renderer3.domElement);
+  
+  renderer4 = new THREE.WebGLRenderer({
+    antialias: true
+  });
+  var ww4 = $('#container4').innerWidth();
+  var hh4 = $('#container4').innerHeight();
+  renderer4.setSize(ww4, hh4);
+  renderer4.setClearColor(0x888888);
+  renderer4.shadowMap.enabled = true;
+  renderer4.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+  $('#container4').append(renderer4.domElement);
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(50, $('#container').innerWidth() / $('#container').innerHeight(), 1, 1000);
@@ -314,7 +353,7 @@ function init() {
 
   //////myScene//////
   //ambientlight
-  var ambientLight = new THREE.AmbientLight(0xffffff, 0.2); // soft white light
+  var ambientLight = new THREE.AmbientLight(0xffffff, 0.3); // soft white light
   scene.add(ambientLight);
 
   let loader = new THREE.TextureLoader();
@@ -336,7 +375,7 @@ function init() {
 
   var ceiling = new THREE.Mesh(new THREE.BoxGeometry(1540 * ruler, 50 * ruler, 1540 * ruler), new THREE.MeshPhongMaterial({
     color: 0xffffff,
-    opacity: 0.5,
+    opacity: 0.3,
     transparent: true,
     side: THREE.DoubleSide
   }));
@@ -462,7 +501,7 @@ function init() {
   //////lamps//////
   lamp.push(new NewLamp(2 * ruler, 0x999999, 0xffffff, 0.3));
   lamp[0].box.rotateZ(-Math.PI / 180 * 70);
-  lamp[0].box.position.set(-500 * ruler, 265 * ruler, 475 * ruler);
+  lamp[0].box.position.set(-500 * ruler, 265 * ruler, 550 * ruler);
 
   lamp.push(new NewLamp(2 * ruler, 0x999999, 0xffffff, 0.3));
   lamp[1].box.rotateZ(-Math.PI / 180 * 70);
@@ -473,17 +512,22 @@ function init() {
   lamp[2].box.position.set(-600 * ruler, 250 * ruler, -190 * ruler);*/
 
   //////yardLight//////
-  yardLight.push(new THREE.PointLight(0xffffff, 0.5, 750*ruler, 2));
+  var plPower = 600*ruler;
+  yardLight.push(new THREE.PointLight(0xffffff, 0.5, plPower, 2));
   yardLight[0].castShadow = true;
   yardLight[0].position.set(-500 * ruler, 295 * ruler, 550 * ruler);
 
-  yardLight.push(new THREE.PointLight(0xffffff, 0.5, 750*ruler, 2));
+  yardLight.push(new THREE.PointLight(0xffffff, 0.5, plPower, 2));
   yardLight[1].castShadow = true;
   yardLight[1].position.set(-500 * ruler, 295 * ruler, 250 * ruler);
 
-  /*yardLight.push(new THREE.PointLight(0x888888, 0.5, 0, 2));
+  yardLight.push(new THREE.PointLight(0xffffff, 0.5, plPower, 2));
   yardLight[2].castShadow = true;
-  yardLight[2].position.set(-500 * ruler, 295 * ruler, -190 * ruler);*/
+  yardLight[2].position.set(-500 * ruler, 295 * ruler, -190 * ruler);
+  
+  yardLight.push(new THREE.PointLight(0xffffff, 0.5, plPower, 2));
+  yardLight[3].castShadow = true;
+  yardLight[3].position.set(-500 * ruler, 295 * ruler, -580 * ruler);
 
   yardLight.forEach(function(yL, i) {
     scene.add(yL);
@@ -515,6 +559,17 @@ function init() {
   anglesCheck.push(camCase[2].rotation.y)
   signs.push(1);
   
+  myCamera = new NewCamera();
+  cameras.push(myCamera.sCam);
+  camCase.push(myCamera.cameraCase);
+  camCase[3].position.set(-700 * ruler, 275 * ruler, -700 * ruler);
+  camCase[3].rotation.y = Math.PI/6*7;
+  camCase[3].rotation.x = -Math.PI / 6;
+  camCase[3].rotation.z = 0;
+  angles.push(camCase[3].rotation.y);
+  anglesCheck.push(camCase[3].rotation.y)
+  signs.push(1);
+  
   //pictures
   texture = loader.load('img/c895010chara1.jpg');
   texture.repeat.set(1, 1);
@@ -529,11 +584,11 @@ function init() {
   pic.receiveShadow = true; //default
   pic.name = "朝武 芳乃";
   pickables.push (pic);
-  pickables[0].position.set(-749 * ruler, 140 * ruler, 475 * ruler);//lamp[0].box.position.set(-500 * ruler, 265 * ruler, 475 * ruler);
+  pickables[0].position.set(-745 * ruler, 140 * ruler, 550 * ruler);//lamp[0].box.position.set(-500 * ruler, 265 * ruler, 475 * ruler);
   scene.add(pickables[0]);
   cameraOfPic = new THREE.PerspectiveCamera(50, $('#container').innerWidth() / $('#container').innerHeight(), 1, 1000);
-  cameraOfPic.position.set(-350 * ruler, 150 * ruler, 475 * ruler);
-  cameraOfPic.lookAt(new THREE.Vector3(-749 * ruler, 140 * ruler, 475 * ruler));
+  cameraOfPic.position.set(-450 * ruler, 150 * ruler, 550 * ruler);
+  cameraOfPic.lookAt(new THREE.Vector3(-745 * ruler, 140 * ruler, 550 * ruler));
   camerasOfPic.push(cameraOfPic);
   
   texture = loader.load('img/c895010chara3.jpg');
@@ -549,11 +604,11 @@ function init() {
   pic.receiveShadow = true; //default
   pic.name = "ムラサメ";
   pickables.push (pic);
-  pickables[1].position.set(-749 * ruler, 140 * ruler, 175 * ruler);//lamp[1].box.position.set(-500 * ruler, 265 * ruler, 175 * ruler);
+  pickables[1].position.set(-745 * ruler, 140 * ruler, 175 * ruler);//lamp[1].box.position.set(-500 * ruler, 265 * ruler, 175 * ruler);
   scene.add(pickables[1]);
   cameraOfPic = new THREE.PerspectiveCamera(50, $('#container').innerWidth() / $('#container').innerHeight(), 1, 1000);
-  cameraOfPic.position.set(-350 * ruler, 150 * ruler, 175 * ruler);
-  cameraOfPic.lookAt(new THREE.Vector3(-749 * ruler, 140 * ruler, 175 * ruler));
+  cameraOfPic.position.set(-450 * ruler, 150 * ruler, 175 * ruler);
+  cameraOfPic.lookAt(new THREE.Vector3(-745 * ruler, 140 * ruler, 175 * ruler));
   camerasOfPic.push(cameraOfPic);
   
 
@@ -580,6 +635,12 @@ function onWindowResize() {
   camera3.aspect = ww3 / hh3;
   camera3.updateProjectionMatrix();
   renderer3.setSize(ww3, hh3);
+  
+  var ww4 = $('#container4').innerWidth();
+  var hh4 = $('#container4').innerHeight();
+  camera4.aspect = ww4 / hh4;
+  camera4.updateProjectionMatrix();
+  renderer4.setSize(ww4, hh4);
 }
 
 function onDocumentMouseDown(event) {
@@ -602,9 +663,16 @@ function onDocumentMouseDown(event) {
     //cyl.position.copy(intersects[0].point);
     //alert(intersects[0].object.name + " is picked!");
 	for(var cc = 0; cc < pickables.length; cc++){
-		if(intersects[0].object.name == pickables[cc].name){
-			camera = camerasOfPic[cc];
-		}
+		if(camera == cameras[0])
+			if(intersects[0].object.name == pickables[cc].name){
+				camera = camerasOfPic[cc];
+				//infoText = $("#pictureInfos[cc]");
+				//infoText.html(pictureInfo.html().replace(/\n/g,'<br/>'));
+				//$("#pictureInfo").text(infoText);
+				
+				informationText = $("#pictureInfo").text(pictureInfos[cc]);
+				informationText.html(informationText.html().replace(/\n/g,'<br/>'));
+			}
 	}
   }
 }
@@ -639,6 +707,8 @@ function render() {
   renderer2.render(scene, camera2);
   camera3 = cameras[2];
   renderer3.render(scene, camera3);
+  camera4 = cameras[3];
+  renderer4.render(scene, camera4);
 }
 
 function shadow(Object, castShadow, receiveShadow) {
