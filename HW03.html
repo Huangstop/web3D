@@ -525,15 +525,15 @@ function init() {
   }));
   shadow(floor, false, true);
   pic.rotation.y = Math.PI/2;
-  pic.castShadow = true; //default is false
+  //pic.castShadow = true; //default is false
   pic.receiveShadow = true; //default
   pic.name = "朝武 芳乃";
   pickables.push (pic);
-  pickables[0].position.set(-745 * ruler, 140 * ruler, 475 * ruler);//lamp[0].box.position.set(-500 * ruler, 265 * ruler, 475 * ruler);
+  pickables[0].position.set(-749 * ruler, 140 * ruler, 475 * ruler);//lamp[0].box.position.set(-500 * ruler, 265 * ruler, 475 * ruler);
   scene.add(pickables[0]);
   cameraOfPic = new THREE.PerspectiveCamera(50, $('#container').innerWidth() / $('#container').innerHeight(), 1, 1000);
   cameraOfPic.position.set(-350 * ruler, 150 * ruler, 475 * ruler);
-  cameraOfPic.lookAt(new THREE.Vector3(-745 * ruler, 140 * ruler, 475 * ruler));
+  cameraOfPic.lookAt(new THREE.Vector3(-749 * ruler, 140 * ruler, 475 * ruler));
   camerasOfPic.push(cameraOfPic);
   
   texture = loader.load('img/c895010chara3.jpg');
@@ -545,15 +545,15 @@ function init() {
   }));
   shadow(floor, false, true);
   pic.rotation.y = Math.PI/2;
-  pic.castShadow = true; //default is false
+  //pic.castShadow = true; //default is false
   pic.receiveShadow = true; //default
   pic.name = "ムラサメ";
   pickables.push (pic);
-  pickables[1].position.set(-745 * ruler, 140 * ruler, 175 * ruler);//lamp[1].box.position.set(-500 * ruler, 265 * ruler, 175 * ruler);
+  pickables[1].position.set(-749 * ruler, 140 * ruler, 175 * ruler);//lamp[1].box.position.set(-500 * ruler, 265 * ruler, 175 * ruler);
   scene.add(pickables[1]);
   cameraOfPic = new THREE.PerspectiveCamera(50, $('#container').innerWidth() / $('#container').innerHeight(), 1, 1000);
   cameraOfPic.position.set(-350 * ruler, 150 * ruler, 175 * ruler);
-  cameraOfPic.lookAt(new THREE.Vector3(-745 * ruler, 140 * ruler, 175 * ruler));
+  cameraOfPic.lookAt(new THREE.Vector3(-749 * ruler, 140 * ruler, 175 * ruler));
   camerasOfPic.push(cameraOfPic);
   
 
