@@ -7,8 +7,12 @@
   height: 30vw;
   float: left;
   background-color: yellow;
-  margin-left: 5vw;
-  margin-right: 3vw;
+  margin-left: 2vw;
+}
+
+#bigContainer{
+	width: 54vw;
+	float: right;
 }
 
 #container2 {
@@ -16,8 +20,8 @@
   height: 12vw;
   float: left;
   background-color: red;
-  margin-top:2vw;
-  margin-left: 1vw;
+  margin-top:1vw;
+  margin-right:1vw;
 }
 
 #container3 {
@@ -25,8 +29,8 @@
   height: 12vw;
   float: left;
   background-color: red;
-  margin-top:2vw;
-  margin-left: 1vw;
+  margin-top:1vw;
+  margin-right:1vw;
 }
 
 #container4 {
@@ -34,8 +38,8 @@
   height: 12vw;
   float: left;
   background-color: red;
-  margin-top:2vw;
-  margin-left: 1vw;
+  margin-top:1vw;
+  margin-right:1vw;
 }
 
 p {
@@ -46,13 +50,15 @@ p {
 </style>
 </head>
 <body>
-<h1 style="font-size:2em; text-align:center; margin:15px">
+<h1 style="font-size:3em; text-align:center; margin:15px">
 試作型&nbsp&nbsp&nbsp&nbsp<s>柚子社</s>&nbsp&nbsp千恋＊万花&nbsp&nbsp&nbsp&nbsp角色介紹館
 </h1>
 <hr>
 <div id="container">
   <!--canvas id='mycanvas'></canvas-->
 </div>
+
+<div id="bigContainer">
 
 <button id="butPower" style="width:40vw">Power Button</button>
 <br><button id="butYL" style="width:15vw">YardLight Button</button>
@@ -72,10 +78,13 @@ p {
 <div id="container4">
   <!--canvas id='mycanvas'></canvas-->
 </div>
-<br>
-<p style="font-size:32px;margin-left:5vw"> 角色說明: </p>
-<p id="pictureInfo" style="font-size:16px" style="width:20vw">請點選左側畫面上的圖片！</p>
-<br>
+
+<div style="width:20vw" style="margin-right:5vw">
+<div style="font-size:24px" style="width:20vw"> 角色說明: </div>
+<div id="pictureInfo" style="font-size:16px" style="width:20vw">請點選左側畫面上的圖片！</div>
+<div>
+
+</div>
 
 <!--
 <p>
@@ -353,7 +362,7 @@ function init() {
 
   //////myScene//////
   //ambientlight
-  var ambientLight = new THREE.AmbientLight(0xffffff, 0.3); // soft white light
+  var ambientLight = new THREE.AmbientLight(0xffffff, 0.4); // soft white light
   scene.add(ambientLight);
 
   let loader = new THREE.TextureLoader();
