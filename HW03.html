@@ -50,8 +50,8 @@ p {
 </style>
 </head>
 <body>
-<h1 style="font-size:3em; text-align:center; margin:15px">
-試作型&nbsp&nbsp&nbsp&nbsp<s>柚子社</s>&nbsp&nbsp千恋＊万花&nbsp&nbsp&nbsp&nbsp角色介紹館
+<h1 style="font-size:2em; text-align:center; margin:15px">
+<s>柚子社</s>&nbsp&nbsp千恋＊万花&nbsp&nbspキャラー紹介
 </h1>
 <hr>
 <div id="container">
@@ -60,12 +60,22 @@ p {
 
 <div id="bigContainer">
 
-<button id="butPower" style="width:40vw">Power Button</button>
-<br><button id="butYL" style="width:15vw">YardLight Button</button>
+<div style="width:40vw">
+
+<!--<button id="butPower" style="width:40vw">Power Button</button>
+<br><button id="butYL" style="width:20vw">YardLight Button</button><button id="butLamp" style="width:20vw">Lamp Button</button>
 <input type=range min=0.1 max=1 step=0.1 id='YLBrightness' style="width:15vw"> Brightness
-<br><button id="butLamp" style="width:15vw">Lamp Button</button>
-<input type=range min=0.1 max=0.7 step=0.1 id='lampBrightness' style="width:15vw"> Brightness
-<br><button id="defaultCam" style="width:20vw">Default Camera</button><button id="switchCam" style="width:20vw">Camera Switch</button>
+<button id="butLamp" style="width:20vw">Lamp Button</button>
+<input type=range min=0.1 max=0.7 step=0.1 id='lampBrightness' style="width:15vw"> Brightness-->
+<button id="defaultCam" style="width:20vw">Default Camera</button>
+<select id="selectArt" style="font-size:16px;width:16vw;float:right">
+<option value="0">Default Camera</option>
+<option value="1">圖片1</option>
+<option value="2">圖片2</option>
+</select>
+<!--<button id="switchCam" style="width:20vw">Camera Switch</button>-->
+
+</div>
 
 <div id="container2">
   <!--canvas id='mycanvas'></canvas-->
@@ -79,9 +89,9 @@ p {
   <!--canvas id='mycanvas'></canvas-->
 </div>
 
-<div style="width:40vw" style="margin-right:5vw">
+<div style="width:50vw" style="margin-right:5vw">
 <div style="font-size:24px"> 角色說明: </div>
-<div id="pictureInfo" style="font-size:16px">請點選左側畫面上的圖片！</div>
+<div id="pictureInfo" style="font-size:16px">請點選左側畫面上的圖片<br>或是使用下拉式選單選取圖片</div>
 <div>
 
 </div>
@@ -139,7 +149,8 @@ var pickables = [];
 var camerasOfPic = [];
 var pictureInfos = [
 "朝武 芳乃 （ともたけ よしの）　CV：遥そら\n穂織にある神社の巫女姫様。\n主人公が神刀をへし折ったことで、土地の掟に従ってムリヤリ婚約相手にされてしまう。\n生真面目な性格で若干クールに見られがちだが、実際は冷たい人間ではない。\n\n喜怒哀楽がわりとハッキリしていて、精神的には子供っぽい部分が多々ある。\n冷静沈着に振る舞おうとするものの、簡単なミスも多くて意外とヌケている。\n「～～～……とにかく、結婚なんてしませんから。 お父さんが勝手に言っているだけですから」\n",
-"ムラサメ　CV：佐藤みかん\n神刀 “叢雨丸” に宿る魂のような存在。\n子供っぽい一面と、大人っぽい一面を併せ持っている。\n基本的には見た目通りの子供らしい性格で、元気で明るい女の子。\n数百年に渡り存在しているが、普通の人間には姿を見ることもできない。\n\n実は怖がりで、幽霊などが苦手。\n「吾輩の名はムラサメ。 この“叢雨丸”の管理者であり、神力（しんりき）を司る者である」"
+"ムラサメ　CV：佐藤みかん\n神刀 “叢雨丸” に宿る魂のような存在。\n子供っぽい一面と、大人っぽい一面を併せ持っている。\n基本的には見た目通りの子供らしい性格で、元気で明るい女の子。\n数百年に渡り存在しているが、普通の人間には姿を見ることもできない。\n\n実は怖がりで、幽霊などが苦手。\n「吾輩の名はムラサメ。 この“叢雨丸”の管理者であり、神力（しんりき）を司る者である」",
+"請點選左側畫面上的圖片\n或是使用下拉式選單選取圖片"
 ];
 var infoText;
 
@@ -185,15 +196,38 @@ class NewLamp {
 }
 
 $("#defaultCam").click(function() {
-  counter = 0;
-  camera = cameras[counter];
+	counter = 0;
+	camera = cameras[counter];
+	var informationText;
+	informationText = $("#pictureInfo").text(pictureInfos[pictureInfos.length-1]);
+	informationText.html(informationText.html().replace(/\n/g,'<br/>'));
+	document.getElementById("selectArt").selectedIndex = 0;
 });
 
-$("#switchCam").click(function() {
+/*$("#switchCam").click(function() {
   counter++;
   if (counter >= cameras.length)
     counter = 0;
   camera = cameras[counter];
+});*/
+
+$("#selectArt").change(function(){
+  var informationText;
+  if( $("#selectArt").val() == 0) {
+	camera = cameras[0];
+	informationText = $("#pictureInfo").text(pictureInfos[pictureInfos.length-1]);
+	informationText.html(informationText.html().replace(/\n/g,'<br/>'));
+  }
+  else if( $("#selectArt").val() == 1) {
+	camera = camerasOfPic[0];
+	informationText = $("#pictureInfo").text(pictureInfos[0]);
+	informationText.html(informationText.html().replace(/\n/g,'<br/>'));
+  }
+  else if( $("#selectArt").val() == 2) {
+	camera = camerasOfPic[1];
+	informationText = $("#pictureInfo").text(pictureInfos[1]);
+	informationText.html(informationText.html().replace(/\n/g,'<br/>'));
+  }
 });
 
 class NewCamera {
@@ -231,7 +265,7 @@ class NewCamera {
   }
 }
 
-$('#butPower').click(function() {
+/*$('#butPower').click(function() {
   butPower = !butPower;
 
   if (butYL == true && butPower == true) {
@@ -275,6 +309,7 @@ $('#YLBrightness').change(function() {
     yardLight.forEach(function(l) {
       l.intensity = YLBrightness;
     })
+	console.log(YLBrightness);
 });
 
 $('#butLamp').click(function() {
@@ -297,7 +332,8 @@ $('#lampBrightness').change(function() {
     lamp.forEach(function(l) {
       l.light.intensity = lampBrightness;
     })
-});
+	console.log(lampBrightness);
+});*/
 
 init();
 animate();
@@ -350,8 +386,7 @@ function init() {
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(50, $('#container').innerWidth() / $('#container').innerHeight(), 1, 1000);
-  camera.position.z = 1500 * ruler;
-  camera.position.y = 1500 * ruler;
+  camera.position.y = 2000 * ruler;
   cameras.push(camera);
   camCase.push(null);
   angles.push(null);
@@ -367,7 +402,7 @@ function init() {
 
   let loader = new THREE.TextureLoader();
   loader.crossOrigin = '';
-  texture = loader.load('https://i.imgur.com/tcP774R.jpg?1');
+  texture = loader.load('img/tcP774R.jpg');
   texture.repeat.set(5, 5);
   texture.wrapS = texture.wrapT = true;
 
@@ -508,11 +543,12 @@ function init() {
   scene.add(innerWall);
 
   //////lamps//////
-  lamp.push(new NewLamp(2 * ruler, 0x999999, 0xffffff, 0.3));
+  let lPower = 0.2;
+  lamp.push(new NewLamp(2 * ruler, 0x999999, 0xffffff, lPower));
   lamp[0].box.rotateZ(-Math.PI / 180 * 70);
   lamp[0].box.position.set(-500 * ruler, 265 * ruler, 550 * ruler);
 
-  lamp.push(new NewLamp(2 * ruler, 0x999999, 0xffffff, 0.3));
+  lamp.push(new NewLamp(2 * ruler, 0x999999, 0xffffff, lPower));
   lamp[1].box.rotateZ(-Math.PI / 180 * 70);
   lamp[1].box.position.set(-500 * ruler, 265 * ruler, 175 * ruler);
 
@@ -521,20 +557,21 @@ function init() {
   lamp[2].box.position.set(-600 * ruler, 250 * ruler, -190 * ruler);*/
 
   //////yardLight//////
-  var plPower = 600*ruler;
-  yardLight.push(new THREE.PointLight(0xffffff, 0.5, plPower, 2));
+  let ylDistense = 650*ruler;
+  let ylPower = 0.6;
+  yardLight.push(new THREE.PointLight(0xffffff, ylPower, ylDistense, 2));
   yardLight[0].castShadow = true;
   yardLight[0].position.set(-500 * ruler, 295 * ruler, 550 * ruler);
 
-  yardLight.push(new THREE.PointLight(0xffffff, 0.5, plPower, 2));
+  yardLight.push(new THREE.PointLight(0xffffff, ylPower, ylDistense, 2));
   yardLight[1].castShadow = true;
   yardLight[1].position.set(-500 * ruler, 295 * ruler, 250 * ruler);
 
-  yardLight.push(new THREE.PointLight(0xffffff, 0.5, plPower, 2));
+  yardLight.push(new THREE.PointLight(0xffffff, ylPower, ylDistense, 2));
   yardLight[2].castShadow = true;
   yardLight[2].position.set(-500 * ruler, 295 * ruler, -190 * ruler);
   
-  yardLight.push(new THREE.PointLight(0xffffff, 0.5, plPower, 2));
+  yardLight.push(new THREE.PointLight(0xffffff, ylPower, ylDistense, 2));
   yardLight[3].castShadow = true;
   yardLight[3].position.set(-500 * ruler, 295 * ruler, -580 * ruler);
 
@@ -623,6 +660,8 @@ function init() {
 
   window.addEventListener('resize', onWindowResize, false);
   window.addEventListener('mousedown', onDocumentMouseDown, false);
+  
+  //$("#selectArt").option = 2;
 
 }
 
@@ -681,6 +720,7 @@ function onDocumentMouseDown(event) {
 				
 				informationText = $("#pictureInfo").text(pictureInfos[cc]);
 				informationText.html(informationText.html().replace(/\n/g,'<br/>'));
+				document.getElementById("selectArt").selectedIndex = cc+1;
 			}
 	}
   }
