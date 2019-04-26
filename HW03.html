@@ -793,7 +793,7 @@ function render() {
 
   for (let cc = 0; cc < angles.length; cc++) {
     if (angles[cc] != null && anglesCheck[cc] != null) {
-      angles[cc] += 0.0035 * signs[cc];
+      angles[cc] += 0.004 * signs[cc];
       if (angles[cc] > anglesCheck[cc] + 0.5 || angles[cc] < anglesCheck[cc] - 0.5)
         signs[cc] *= -1;
       if (camCase[cc] != null)
