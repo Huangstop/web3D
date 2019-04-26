@@ -411,7 +411,7 @@ function init() {
 
   //////myScene//////
   //ambientlight
-  var ambientLight = new THREE.AmbientLight(0xffffff, 0.4); // soft white light
+  var ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // soft white light
   scene.add(ambientLight);
 
   let loader = new THREE.TextureLoader();
@@ -557,7 +557,7 @@ function init() {
   scene.add(innerWall);
 
   //////lamps//////
-  let lPower = 0.2;
+  let lPower = 0.1;
   lamp.push(new NewLamp(2 * ruler, 0x999999, 0xffffff, lPower));
   lamp[0].box.rotateZ(-Math.PI / 180 * 70);
   lamp[0].box.position.set(-500 * ruler, 265 * ruler, 550 * ruler);
@@ -575,7 +575,7 @@ function init() {
   lamp[3].box.position.set(-500 * ruler, 265 * ruler, -575 * ruler);
 
   //////yardLight//////
-  let ylDistense = 650*ruler;
+  let ylDistense = 750*ruler;
   let ylPower = 0.6;
   yardLight.push(new THREE.PointLight(0xffffff, ylPower, ylDistense, 2));
   yardLight[0].castShadow = true;
