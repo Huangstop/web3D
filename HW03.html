@@ -70,8 +70,10 @@ p {
 <button id="defaultCam" style="width:20vw">Default Camera</button>
 <select id="selectArt" style="font-size:16px;width:16vw;float:right">
 <option value="0">Default Camera</option>
-<option value="1">圖片1</option>
-<option value="2">圖片2</option>
+<option value="1">写真1</option>
+<option value="2">写真2</option>
+<option value="3">写真3</option>
+<option value="4">写真4</option>
 </select>
 <!--<button id="switchCam" style="width:20vw">Camera Switch</button>-->
 
@@ -150,6 +152,8 @@ var camerasOfPic = [];
 var pictureInfos = [
 "朝武 芳乃 （ともたけ よしの）　CV：遥そら\n穂織にある神社の巫女姫様。\n主人公が神刀をへし折ったことで、土地の掟に従ってムリヤリ婚約相手にされてしまう。\n生真面目な性格で若干クールに見られがちだが、実際は冷たい人間ではない。\n\n喜怒哀楽がわりとハッキリしていて、精神的には子供っぽい部分が多々ある。\n冷静沈着に振る舞おうとするものの、簡単なミスも多くて意外とヌケている。\n「～～～……とにかく、結婚なんてしませんから。 お父さんが勝手に言っているだけですから」\n",
 "ムラサメ　CV：佐藤みかん\n神刀 “叢雨丸” に宿る魂のような存在。\n子供っぽい一面と、大人っぽい一面を併せ持っている。\n基本的には見た目通りの子供らしい性格で、元気で明るい女の子。\n数百年に渡り存在しているが、普通の人間には姿を見ることもできない。\n\n実は怖がりで、幽霊などが苦手。\n「吾輩の名はムラサメ。 この“叢雨丸”の管理者であり、神力（しんりき）を司る者である」",
+"常陸 茉子 （ひたち まこ）　CV：小鳥居夕花\n巫女姫様の護衛として育てられた少女。\n仕事にはまじめだが、性格まで生真面目というわけではない。\nよく茶化したり イタズラを仕掛けたりと、お茶目な性格をしている。\n\n恥ずかしがり屋な一面もあり、女の子として褒められることが苦手。\n「そんなに美味しそうに食べてもらえると、紹介した私としても嬉しいです」",
+"レナ・リヒテナウアー　CV：沢澤砂羽\n外国からやってきた留学生の女の子。\n明るく素直で優しく、いつも元気。 良くも悪くも真っ直ぐな性格。\nつまづいてもへこたれず、「挫けずに頑張りマスっ！」 と、一人で立ち直るタイプ。\n裏表がなく、純粋な幼子がそのまま成長したようなストレートな女の子\n\n優しい日本人が好き。 ニッポンも好き。\n「家でお母さんが日本の料理を調べて作ることもありましたので、お箸も慣れたものでありますよ」",
 "請點選左側畫面上的圖片\n或是使用下拉式選單選取圖片"
 ];
 var infoText;
@@ -226,6 +230,16 @@ $("#selectArt").change(function(){
   else if( $("#selectArt").val() == 2) {
 	camera = camerasOfPic[1];
 	informationText = $("#pictureInfo").text(pictureInfos[1]);
+	informationText.html(informationText.html().replace(/\n/g,'<br/>'));
+  }
+  else if( $("#selectArt").val() == 3) {
+	camera = camerasOfPic[2];
+	informationText = $("#pictureInfo").text(pictureInfos[2]);
+	informationText.html(informationText.html().replace(/\n/g,'<br/>'));
+  }
+  else if( $("#selectArt").val() == 4) {
+	camera = camerasOfPic[3];
+	informationText = $("#pictureInfo").text(pictureInfos[3]);
 	informationText.html(informationText.html().replace(/\n/g,'<br/>'));
   }
 });
@@ -551,10 +565,14 @@ function init() {
   lamp.push(new NewLamp(2 * ruler, 0x999999, 0xffffff, lPower));
   lamp[1].box.rotateZ(-Math.PI / 180 * 70);
   lamp[1].box.position.set(-500 * ruler, 265 * ruler, 175 * ruler);
+  
+  lamp.push(new NewLamp(2 * ruler, 0x999999, 0xffffff, lPower));
+  lamp[2].box.rotateZ(-Math.PI / 180 * 70);
+  lamp[2].box.position.set(-500 * ruler, 265 * ruler, -225 * ruler);
 
-  /*lamp.push(new NewLamp(2 * ruler, 0x999999, 0xbb3700, 1));
-  lamp[2].box.rotateZ(-Math.PI / 3);
-  lamp[2].box.position.set(-600 * ruler, 250 * ruler, -190 * ruler);*/
+  lamp.push(new NewLamp(2 * ruler, 0x999999, 0xffffff, lPower));
+  lamp[3].box.rotateZ(-Math.PI / 180 * 70);  
+  lamp[3].box.position.set(-500 * ruler, 265 * ruler, -575 * ruler);
 
   //////yardLight//////
   let ylDistense = 650*ruler;
@@ -655,6 +673,46 @@ function init() {
   cameraOfPic = new THREE.PerspectiveCamera(50, $('#container').innerWidth() / $('#container').innerHeight(), 1, 1000);
   cameraOfPic.position.set(-450 * ruler, 150 * ruler, 175 * ruler);
   cameraOfPic.lookAt(new THREE.Vector3(-745 * ruler, 140 * ruler, 175 * ruler));
+  camerasOfPic.push(cameraOfPic);
+  
+  texture = loader.load('img/c895010chara2.jpg');
+  texture.repeat.set(1, 1);
+  texture.wrapS = texture.wrapT = true;
+  pic = new THREE.Mesh(new THREE.PlaneGeometry(200 * ruler, 240 * ruler), new THREE.MeshPhongMaterial({
+    map: texture,
+    side: THREE.DoubleSide
+  }));
+  shadow(floor, false, true);
+  pic.rotation.y = Math.PI/2;
+  //pic.castShadow = true; //default is false
+  pic.receiveShadow = true; //default
+  pic.name = "常陸 茉子";
+  pickables.push (pic);
+  pickables[2].position.set(-745 * ruler, 140 * ruler, -225 * ruler);//lamp[2].box.position.set(-500 * ruler, 265 * ruler, -225 * ruler);
+  scene.add(pickables[2]);
+  cameraOfPic = new THREE.PerspectiveCamera(50, $('#container').innerWidth() / $('#container').innerHeight(), 1, 1000);
+  cameraOfPic.position.set(-450 * ruler, 150 * ruler, -225 * ruler);
+  cameraOfPic.lookAt(new THREE.Vector3(-745 * ruler, 140 * ruler, -225 * ruler));
+  camerasOfPic.push(cameraOfPic);
+  
+  texture = loader.load('img/c895010chara4.jpg');
+  texture.repeat.set(1, 1);
+  texture.wrapS = texture.wrapT = true;
+  pic = new THREE.Mesh(new THREE.PlaneGeometry(200 * ruler, 240 * ruler), new THREE.MeshPhongMaterial({
+    map: texture,
+    side: THREE.DoubleSide
+  }));
+  shadow(floor, false, true);
+  pic.rotation.y = Math.PI/2;
+  //pic.castShadow = true; //default is false
+  pic.receiveShadow = true; //default
+  pic.name = "レナ・リヒテナウアー";
+  pickables.push (pic);
+  pickables[3].position.set(-745 * ruler, 140 * ruler, -575 * ruler);//lamp[3].box.position.set(-500 * ruler, 265 * ruler, -575 * ruler);
+  scene.add(pickables[3]);
+  cameraOfPic = new THREE.PerspectiveCamera(50, $('#container').innerWidth() / $('#container').innerHeight(), 1, 1000);
+  cameraOfPic.position.set(-450 * ruler, 150 * ruler, -575 * ruler);
+  cameraOfPic.lookAt(new THREE.Vector3(-745 * ruler, 140 * ruler, -575 * ruler));
   camerasOfPic.push(cameraOfPic);
   
 
