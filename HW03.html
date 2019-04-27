@@ -6,40 +6,51 @@
   width: 40vw;
   height: 30vw;
   float: left;
-  background-color: yellow;
+  background-color: white;
   margin-left: 2vw;
-}
-
-#bigContainer{
-	width: 54vw;
-	float: right;
 }
 
 #container2 {
   width: 16vw;
   height: 12vw;
   float: left;
-  background-color: red;
+  background-color: white;
   margin-top:1vw;
   margin-right:1vw;
+  text-align:center;
+  color:Red;
 }
 
 #container3 {
   width: 16vw;
   height: 12vw;
   float: left;
-  background-color: red;
+  background-color: white;
   margin-top:1vw;
   margin-right:1vw;
+  text-align:center;
+  color:Green;
 }
 
 #container4 {
   width: 16vw;
   height: 12vw;
   float: left;
-  background-color: red;
+  background-color: white;
   margin-top:1vw;
   margin-right:1vw;
+  text-align:center;
+  color:Blue;
+}
+
+#sCamContainer{
+  width: 24vw;
+  height: 18vw;
+  margin-top: 1vw;
+  background-color: white;
+  position: absolute;
+  top:0vw;
+  left:20vw;
 }
 
 p {
@@ -54,11 +65,15 @@ p {
 <s>柚子社</s>&nbsp&nbsp千恋＊万花&nbsp&nbspキャラー紹介
 </h1>
 <hr>
+<div style = "width:40vw;float:left">
 <div id="container">
   <!--canvas id='mycanvas'></canvas-->
 </div>
+<div style="font-size:24px"> 角色說明: </div>
+<div id="pictureInfo" style="font-size:16px">請點選上方畫面上的圖片<br>或是使用下拉式選單選取圖片</div>
+</div>
 
-<div id="bigContainer">
+<div style="width: 54vw;float: right">
 
 <div style="width:40vw">
 
@@ -78,24 +93,39 @@ p {
 <!--<button id="switchCam" style="width:20vw">Camera Switch</button>-->
 
 </div>
+<div style = "width: 54vw; float: right;position: relative;">
+	<div style = "width:18vw;height:18vw;margin-top:1vw;background-image: url( ' img/map.jpg ' );background-size:18vw 18vw;position: relative;" >
+		<!--<img src="img/map.jpg" style="width:20vw;height:20vw;position:relative;z-index:-1">-->
+		<div style = "width:18vw;height:18vw;">
+			<input id="sCam1" type="button" style="width: 5%;height: 5%;top:93%;left:2%;background-color: Red;border-radius:100%;position:absolute;z-index:1;" />
+			<input id="sCam2" type="button" style="width: 5%;height: 5%;top:65%;left:60%;background-color: Green;border-radius:100%;position:absolute;z-index:1" />
+			<input id="sCam3" type="button" style="width: 5%;height: 5%;top:1%;left:2%;background-color: Blue;border-radius:100%;position:absolute;z-index:1" />
+		</div>
+	</div>
+
+	<div id="sCamContainer">
+	  <!--canvas id='mycanvas'></canvas-->
+	</div>
+</div>
 
 <div id="container2">
   <!--canvas id='mycanvas'></canvas-->
+  紅
 </div>
 
 <div id="container3">
   <!--canvas id='mycanvas'></canvas-->
+  綠
 </div>
 
 <div id="container4">
   <!--canvas id='mycanvas'></canvas-->
+  藍
 </div>
 
 <div style="width:50vw" style="margin-right:5vw">
-<div style="font-size:24px"> 角色說明: </div>
-<div id="pictureInfo" style="font-size:16px">請點選左側畫面上的圖片<br>或是使用下拉式選單選取圖片</div>
-<div>
 
+</div>
 </div>
 
 <!--
@@ -126,7 +156,7 @@ p {
 
 <script>
 
-var scene, renderer, rederer2, rederer3, renderer4, camera, camera2, camera3, camera4;
+var scene, renderer, rederer2, rederer3, renderer4, renderering, camera, camera2, camera3, camera4, sCamera;
 var cameraOfPic;
 var ruler = 0.2;
 var lamp = [];
@@ -154,7 +184,7 @@ var pictureInfos = [
 "ムラサメ　CV：佐藤みかん\n神刀 “叢雨丸” に宿る魂のような存在。\n子供っぽい一面と、大人っぽい一面を併せ持っている。\n基本的には見た目通りの子供らしい性格で、元気で明るい女の子。\n数百年に渡り存在しているが、普通の人間には姿を見ることもできない。\n\n実は怖がりで、幽霊などが苦手。\n「吾輩の名はムラサメ。 この“叢雨丸”の管理者であり、神力（しんりき）を司る者である」",
 "常陸 茉子 （ひたち まこ）　CV：小鳥居夕花\n巫女姫様の護衛として育てられた少女。\n仕事にはまじめだが、性格まで生真面目というわけではない。\nよく茶化したり イタズラを仕掛けたりと、お茶目な性格をしている。\n\n恥ずかしがり屋な一面もあり、女の子として褒められることが苦手。\n「そんなに美味しそうに食べてもらえると、紹介した私としても嬉しいです」",
 "レナ・リヒテナウアー　CV：沢澤砂羽\n外国からやってきた留学生の女の子。\n明るく素直で優しく、いつも元気。 良くも悪くも真っ直ぐな性格。\nつまづいてもへこたれず、「挫けずに頑張りマスっ！」 と、一人で立ち直るタイプ。\n裏表がなく、純粋な幼子がそのまま成長したようなストレートな女の子\n\n優しい日本人が好き。 ニッポンも好き。\n「家でお母さんが日本の料理を調べて作ることもありましたので、お箸も慣れたものでありますよ」",
-"請點選左側畫面上的圖片\n或是使用下拉式選單選取圖片"
+"請點選上方畫面上的圖片\n或是使用下拉式選單選取圖片"
 ];
 var infoText;
 
@@ -349,6 +379,21 @@ $('#lampBrightness').change(function() {
 	console.log(lampBrightness);
 });*/
 
+var changeCam = 1;
+
+$('#sCam1').click(function() {
+	changeCam = 1;
+});
+
+$('#sCam2').click(function() {
+	changeCam = 2;
+});
+
+$('#sCam3').click(function() {
+	changeCam = 3;
+});
+
+
 init();
 animate();
 
@@ -397,6 +442,17 @@ function init() {
   renderer4.shadowMap.enabled = true;
   renderer4.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
   $('#container4').append(renderer4.domElement);
+  
+  renderering = new THREE.WebGLRenderer({
+    antialias: true
+  });
+  var ww5 = $('#sCamContainer').innerWidth();
+  var hh5 = $('#sCamContainer').innerHeight();
+  renderering.setSize(ww5, hh5);
+  renderering.setClearColor(0x888888);
+  renderering.shadowMap.enabled = true;
+  renderering.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+  $('#sCamContainer').append(renderering.domElement);
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(50, $('#container').innerWidth() / $('#container').innerHeight(), 1, 1000);
@@ -747,6 +803,12 @@ function onWindowResize() {
   camera4.aspect = ww4 / hh4;
   camera4.updateProjectionMatrix();
   renderer4.setSize(ww4, hh4);
+  
+  var ww5 = $('#sCamContainer').innerWidth();
+  var hh5 = $('#sCamContainer').innerHeight();
+  sCamera.aspect = ww5 / hh5;
+  sCamera.updateProjectionMatrix();
+  renderering.setSize(ww5, hh5);
 }
 
 function onDocumentMouseDown(event) {
@@ -816,6 +878,10 @@ function render() {
   renderer3.render(scene, camera3);
   camera4 = cameras[3];
   renderer4.render(scene, camera4);
+  
+  sCamera = cameras[changeCam];
+  
+  renderering.render(scene, sCamera);
 }
 
 function shadow(Object, castShadow, receiveShadow) {
